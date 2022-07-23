@@ -20,6 +20,19 @@ export const actions: ActionTree<StatisticsState, RootState> = {
       .catch((e : any) => {
         console.log(e)
       })
+  },
+
+  saveAvailableBitrates ({ commit, dispatch }, { bitrates }): void {
+    console.log("inside saveAvailableBitrates: ", bitrates);
+    commit('MUTATE_SET_AVAILABLE_BITRATES', bitrates)
+  },
+
+  saveAvailableFrameSizes ({ commit, dispatch }, { framesizes }): void{
+    commit('MUTATE_SET_AVAILABLE_FRAME_SIZES', framesizes)
+  },
+
+  addBitrateChangeTimestamp ({ commit, dispatch }, { timestamp }): void{
+    commit('MUTATE_ADD_BITRATE_CHANGED_TIMESTAMP', timestamp)
   }
 
 }

@@ -10,4 +10,8 @@ export const mutations: MutationTree<StatisticsState> = {
   MUTATE_SET_AVAILABLE_BITRATES (state, data: any) {
     state.availableBitrates = data;
   },
+
+  MUTATE_ADD_BITRATE_CHANGED_TIMESTAMP (state, data: any) {
+    state.bitrateChangedTimestamps = data;
+  },
 }

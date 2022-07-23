@@ -10,7 +10,9 @@
             });
 
             player.addEventListener('playbackbitratechanged', function (event, info) {
-                console.log("Video playbackbitratechanged", event, info);
+                //Define new Event to store frameSizes
+                let currentTimestamp = Date.now();
+                player.trigger(new Event('save_bitrate_change_timestamp'), currentTimestamp);
             });
 
             player.addEventListener('play', function (event, info) {
@@ -22,8 +24,6 @@
             });
             
             player.addEventListener('loadedmetadata', function (event, info) {
-                
-                //console.log("Video MetaData: ", player.currentVideoStreamList());
                 let videoStreamList = player.currentVideoStreamList();
                 let selectedIndex = videoStreamList.selectedIndex;
                 let trackList = videoStreamList.streams[selectedIndex].tracks;
@@ -37,7 +37,11 @@
                 console.log(availableBitrates);
                 console.log(availableFrameSizes);
 
-                player.trigger(new Event('save_availabal_bitrates'), availableBitrates);
+                //Define new Event to store Bitrates
+                player.trigger(new Event('save_available_bitrates'), availableBitrates);
+
+                //Define new Event to store frameSizes
+                player.trigger(new Event('save_available_framesizes'), availableFrameSizes);
 
                 //console.log("Audio MetaData: ", player.currentAudioStreamList());
             });

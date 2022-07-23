@@ -8,7 +8,8 @@ import {RootState, StatisticsState } from '../../model/model'
 export const state: StatisticsState = {
   loading: false,
   availableBitrates: [],
-  availableFrameSizes: []
+  availableFrameSizes: [],
+  bitrateChangedTimestamps: []
 }
 
 export const statistics: Module<StatisticsState, RootState> = {

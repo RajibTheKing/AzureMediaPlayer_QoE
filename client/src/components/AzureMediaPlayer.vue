@@ -10,11 +10,46 @@
     
     <v-card>
       <v-card-title>Monitor QoE</v-card-title>
+
       <v-card-subtitle>Available Frame Sizes </v-card-subtitle>
+      <v-list>
+        <v-list-item
+          v-for="(item, i) in statistics.availableFrameSizes" :key="i"
+        >
+        
+          <v-list-item-content>
+            <v-list-item-title v-text="item"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+      </v-list>
 
       <v-card-subtitle>Available Bitrates </v-card-subtitle>
+      <v-list>
+          <v-list-item
+            v-for="(item, i) in statistics.availableBitrates" :key="i"
+          >
+          
+            <v-list-item-content>
+              <v-list-item-title v-text="item"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
 
-      <v-card-subtitle>Number of Bitrate Change </v-card-subtitle>
+      </v-list>
+
+      <v-card-subtitle>Bitrate Changed Timestamps </v-card-subtitle>
+      <v-list>
+          <v-list-item
+            v-for="(item, i) in statistics.bitrateChangedTimestamps" :key="i"
+          >
+          
+            <v-list-item-content>
+              <v-list-item-title v-text="item"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+      </v-list>
+      
     </v-card>
 
   </v-card>
@@ -34,12 +69,19 @@ export default Vue.extend({
   created () {
     this.setupVideoPlayer();
     console.log(this.statistics);
+    var instance = this;
   },
 
   computed: {
     ...mapGetters({
       statistics: 'getStatistics'
     }),
+
+    // ...mapActions({
+    //   saveBitrates: 'saveAvailableBitrates',
+    //   saveFramesizes: 'saveAvailableFrameSizes',
+    //   addBitrateChanged: 'addBitrateChangeTimestamp',
+    // })
   },
 
   methods: {
@@ -47,6 +89,8 @@ export default Vue.extend({
     setupVideoPlayer() {
        this.$nextTick(() => {
           //console.log(this.$refs);
+          let currentInstance = this;
+
           var myPlayer = amp(this.$refs.video, { /* Options */
                 "nativeControlsForTouch": false,
                 autoplay: true,
@@ -69,13 +113,22 @@ export default Vue.extend({
             type: "application/vnd.ms-sstr+xml"
         }]);
 
-        myPlayer.addEventListener('save_availabal_bitrates', function (event: any, bitrates : any) {
-            console.log("save_availabal_bitrates", bitrates);
+        //Listen to events for some statistics
+        myPlayer.addEventListener('save_available_bitrates', function (event: any, bitrates : any) {
+            console.log("save_availabale_bitrates", bitrates);
+            currentInstance.$store.dispatch('saveAvailableBitrates', {bitrates});
         });
 
-        myPlayer.addEventListener('save_availabal_framesizes', function (event: any, framesizes : any) {
+        myPlayer.addEventListener('save_available_framesizes', function (event: any, framesizes : any) {
             console.log("save_availabal_framesizes", framesizes);
+            currentInstance.$store.dispatch('saveAvailableFrameSizes', {framesizes});
+
         });
+
+        myPlayer.addEventListener('save_bitrate_change_timestamp', function (event: any, timestamp : any) {
+            console.log("save_bitrate_change_timestamp", {timestamp});
+        });
+
       })
     }
   }
