@@ -31,8 +31,8 @@ export const actions: ActionTree<StatisticsState, RootState> = {
     commit('MUTATE_SET_AVAILABLE_FRAME_SIZES', framesizes)
   },
 
-  addBitrateChangeTimestamp ({ commit, dispatch }, { timestamp }): void{
-    commit('MUTATE_ADD_BITRATE_CHANGED_TIMESTAMP', timestamp)
+  saveBitrateChangeTimestamps ({ commit, dispatch }, { timestamps }): void{
+    commit('MUTATE_SET_BITRATE_CHANGED_TIMESTAMPS', timestamps)
   }
 
 }

@@ -9,7 +9,7 @@
     </v-card>
     
     <v-card>
-      <v-card-title>Monitor QoE</v-card-title>
+      <v-card-title justify-center>Monitor QoE</v-card-title>
 
       <v-card-subtitle>Available Frame Sizes </v-card-subtitle>
       <v-list>
@@ -31,7 +31,7 @@
           >
           
             <v-list-item-content>
-              <v-list-item-title v-text="item"></v-list-item-title>
+              <v-list-item-title v-text="humanReadableBitrate(item)"></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
@@ -44,7 +44,7 @@
           >
           
             <v-list-item-content>
-              <v-list-item-title v-text="item"></v-list-item-title>
+              <v-list-item-title v-text="humanReadableTimestamp(item)"></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
@@ -85,6 +85,18 @@ export default Vue.extend({
   },
 
   methods: {
+    humanReadableBitrate(bitrate: number) : string {
+      if(bitrate/1000000 >= 1){
+        return (bitrate/1000000).toFixed(2) + " Mbps";
+      }else{
+        return (bitrate/1000).toFixed(2) + " Kbps";
+      }
+    },
+
+    humanReadableTimestamp(timestamp: number) : string {
+      var s = new Date(timestamp).toLocaleTimeString("en-US");
+      return s;
+    },
 
     setupVideoPlayer() {
        this.$nextTick(() => {
@@ -115,18 +127,16 @@ export default Vue.extend({
 
         //Listen to events for some statistics
         myPlayer.addEventListener('save_available_bitrates', function (event: any, bitrates : any) {
-            console.log("save_availabale_bitrates", bitrates);
             currentInstance.$store.dispatch('saveAvailableBitrates', {bitrates});
         });
 
         myPlayer.addEventListener('save_available_framesizes', function (event: any, framesizes : any) {
-            console.log("save_availabal_framesizes", framesizes);
             currentInstance.$store.dispatch('saveAvailableFrameSizes', {framesizes});
 
         });
 
-        myPlayer.addEventListener('save_bitrate_change_timestamp', function (event: any, timestamp : any) {
-            console.log("save_bitrate_change_timestamp", {timestamp});
+        myPlayer.addEventListener('save_bitrate_change_timestamps', function (event: any, timestamps : any) {
+            currentInstance.$store.dispatch('saveBitrateChangeTimestamps', {timestamps});
         });
 
       })
@@ -135,3 +145,14 @@ export default Vue.extend({
 
 })
 </script>
+<style scoped>
+.v-list-item__content{
+  padding: 2px;
+}
+
+.v-list-item{
+  padding: 2px;
+  padding-left: 20px;
+  min-height: 10px;
+}
+</style>
