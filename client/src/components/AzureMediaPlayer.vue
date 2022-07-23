@@ -13,6 +13,7 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
 import { mapActions, mapGetters } from 'vuex'
+import '@/scripts/telemetry.js'
 
 export default Vue.extend({
   name: 'AzureMediaPlayer',
