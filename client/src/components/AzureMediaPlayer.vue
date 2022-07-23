@@ -1,11 +1,21 @@
 <template>
   <v-card class="mx-auto" max-width="654" tile justify-center>
-
-    <video id= "myVideo" ref="video" class="azuremediaplayer amp-default-skin ma-2">
+    <v-card>
+      <video id= "myVideo" ref="video" class="azuremediaplayer amp-default-skin ma-2">
         <p class="amp-no-js">
             To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video
         </p>
-    </video>
+      </video>
+    </v-card>
+    
+    <v-card>
+      <v-card-title>Monitor QoE</v-card-title>
+      <v-card-subtitle>Available Frame Sizes </v-card-subtitle>
+
+      <v-card-subtitle>Available Bitrates </v-card-subtitle>
+
+      <v-card-subtitle>Number of Bitrate Change </v-card-subtitle>
+    </v-card>
 
   </v-card>
 </template>
