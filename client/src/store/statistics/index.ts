@@ -9,7 +9,8 @@ export const state: StatisticsState = {
   loading: false,
   availableBitrates: [],
   availableFrameSizes: [],
-  bitrateChangedTimestamps: []
+  bitrateChangedTimestamps: [],
+  bufferingStats: []
 }
 
 export const statistics: Module<StatisticsState, RootState> = {

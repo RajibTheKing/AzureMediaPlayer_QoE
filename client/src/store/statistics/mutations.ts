@@ -14,4 +14,8 @@ export const mutations: MutationTree<StatisticsState> = {
   MUTATE_SET_BITRATE_CHANGED_TIMESTAMPS (state, data: any) {
     state.bitrateChangedTimestamps = data;
   },
+
+  MUTATE_SET_BUFFERING_STATS (state, data: any) {
+    state.bufferingStats = data;
+  },
 }

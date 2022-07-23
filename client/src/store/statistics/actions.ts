@@ -33,6 +33,10 @@ export const actions: ActionTree<StatisticsState, RootState> = {
 
   saveBitrateChangeTimestamps ({ commit, dispatch }, { timestamps }): void{
     commit('MUTATE_SET_BITRATE_CHANGED_TIMESTAMPS', timestamps)
+  },
+
+  saveBufferingStats({ commit, dispatch }, { bufferingStats }): void{
+    commit('MUTATE_SET_BUFFERING_STATS', bufferingStats)
   }
 
 }

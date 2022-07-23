@@ -49,6 +49,19 @@
           </v-list-item>
 
       </v-list>
+
+      <v-card-subtitle>Buffering Statistics </v-card-subtitle>
+      <v-list>
+          <v-list-item
+            v-for="(item, i) in statistics.bufferingStats" :key="i"
+          >
+          
+            <v-list-item-content>
+              <v-list-item-title v-text="humanReadableTimestamp(item.startTime) + ' ' +(item.duration) + 'ms'"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+      </v-list>
       
     </v-card>
 
@@ -137,6 +150,10 @@ export default Vue.extend({
 
         myPlayer.addEventListener('save_bitrate_change_timestamps', function (event: any, timestamps : any) {
             currentInstance.$store.dispatch('saveBitrateChangeTimestamps', {timestamps});
+        });
+
+        myPlayer.addEventListener('save_buffering_stats', function (event: any, bufferingStats : any) {
+            currentInstance.$store.dispatch('saveBufferingStats', {bufferingStats});
         });
 
       })

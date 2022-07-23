@@ -2,6 +2,12 @@
     amp.plugin('telemetry', function (options) {
         var player = this
         var bitrateChangedTimestamps = [];
+        var bufferingStats = [];
+        var bufferingEndingTimestamp, bufferingStartedTimestamp;
+        var bufferingStarted = false;
+
+
+
         var init = function () {
             //console.log("plugin telemetry initialized with player ", player)
 
@@ -22,6 +28,8 @@
             });
 
             player.addEventListener('waiting', function (event, info) {
+                bufferingStarted = true;
+                bufferingStartedTimestamp = Date.now();
                 console.log("Video waiting", event, info);
             });
 
@@ -35,6 +43,17 @@
 
             player.addEventListener('playing', function(event, info){
                 console.log("playing event", info);
+                //track how much time needed for that buffer
+                if(bufferingStarted){
+                    bufferingEndingTimestamp = Date.now();
+                    bufferingTime = bufferingEndingTimestamp - bufferingStartedTimestamp;
+                    console.log('buffering time = ', bufferingTime);
+                    bufferingStats.push({startTime: bufferingStartedTimestamp, duration: bufferingTime});
+                    bufferingStarted = false;
+
+                    //create a new event to store buffering stats
+                    player.trigger(new Event('save_buffering_stats'), bufferingStats);
+                }
             })
 
             player.addEventListener('ended', function (event, info) {
