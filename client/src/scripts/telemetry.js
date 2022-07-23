@@ -37,6 +37,7 @@
                 console.log(availableBitrates);
                 console.log(availableFrameSizes);
 
+                player.trigger(new Event('save_availabal_bitrates'), availableBitrates);
 
                 //console.log("Audio MetaData: ", player.currentAudioStreamList());
             });

@@ -33,9 +33,13 @@ export default Vue.extend({
 
   created () {
     this.setupVideoPlayer();
+    console.log(this.statistics);
   },
 
   computed: {
+    ...mapGetters({
+      statistics: 'getStatistics'
+    }),
   },
 
   methods: {
@@ -64,6 +68,14 @@ export default Vue.extend({
             src: "http://amssamples.streaming.mediaservices.windows.net/91492735-c523-432b-ba01-faba6c2206a2/AzureMediaServicesPromo.ism/manifest",
             type: "application/vnd.ms-sstr+xml"
         }]);
+
+        myPlayer.addEventListener('save_availabal_bitrates', function (event: any, bitrates : any) {
+            console.log("save_availabal_bitrates", bitrates);
+        });
+
+        myPlayer.addEventListener('save_availabal_framesizes', function (event: any, framesizes : any) {
+            console.log("save_availabal_framesizes", framesizes);
+        });
       })
     }
   }
