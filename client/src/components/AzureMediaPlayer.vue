@@ -1,70 +1,80 @@
 <template>
-  <v-card class="mx-auto" max-width="654" tile justify-center>
-    <v-card>
-      <video id= "myVideo" ref="video" class="azuremediaplayer amp-default-skin ma-2">
-        <p class="amp-no-js">
-            To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video
-        </p>
-      </video>
-    </v-card>
-    
-    <v-card>
-      <v-card-title justify-center>Monitor QoE</v-card-title>
+  <v-card class="mx-auto" max-width="1200" tile justify-center>
+    <v-row>
+      <v-col>
+        <v-card>
+          <video id= "myVideo" ref="video" class="azuremediaplayer amp-default-skin ma-2">
+            <p class="amp-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video
+            </p>
+          </video>
+        </v-card>
 
-      <v-card-subtitle>Available Frame Sizes </v-card-subtitle>
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in statistics.availableFrameSizes" :key="i"
-        >
-        
-          <v-list-item-content>
-            <v-list-item-title v-text="item"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+        <v-btn @click="send_QoE_Stats()">
+          Send Data to Server
+        </v-btn>
+      </v-col>
+      <v-col>
+        <v-card>
+          <v-card-title justify-center>Monitor QoE</v-card-title>
 
-      </v-list>
+          <v-card-subtitle>Available Frame Sizes </v-card-subtitle>
+          <v-list>
+            <v-list-item
+              v-for="(item, i) in statistics.availableFrameSizes" :key="i"
+            >
+            
+              <v-list-item-content>
+                <v-list-item-title v-text="item"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
 
-      <v-card-subtitle>Available Bitrates </v-card-subtitle>
-      <v-list>
-          <v-list-item
-            v-for="(item, i) in statistics.availableBitrates" :key="i"
-          >
+          </v-list>
+
+          <v-card-subtitle>Available Bitrates </v-card-subtitle>
+          <v-list>
+              <v-list-item
+                v-for="(item, i) in statistics.availableBitrates" :key="i"
+              >
+              
+                <v-list-item-content>
+                  <v-list-item-title v-text="humanReadableBitrate(item)"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+          </v-list>
+
+          <v-card-subtitle>Bitrate Changed Timestamps </v-card-subtitle>
+          <v-list>
+              <v-list-item
+                v-for="(item, i) in statistics.bitrateChangedTimestamps" :key="i"
+              >
+              
+                <v-list-item-content>
+                  <v-list-item-title v-text="humanReadableTimestamp(item)"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+          </v-list>
+
+          <v-card-subtitle>Buffering Statistics </v-card-subtitle>
+          <v-list>
+              <v-list-item
+                v-for="(item, i) in statistics.bufferingStats" :key="i"
+              >
+              
+                <v-list-item-content>
+                  <v-list-item-title v-text="humanReadableTimestamp(item.startTime) + ' ' +(item.duration) + 'ms'"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+          </v-list>
           
-            <v-list-item-content>
-              <v-list-item-title v-text="humanReadableBitrate(item)"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+        </v-card>
 
-      </v-list>
+      </v-col>
 
-      <v-card-subtitle>Bitrate Changed Timestamps </v-card-subtitle>
-      <v-list>
-          <v-list-item
-            v-for="(item, i) in statistics.bitrateChangedTimestamps" :key="i"
-          >
-          
-            <v-list-item-content>
-              <v-list-item-title v-text="humanReadableTimestamp(item)"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-      </v-list>
-
-      <v-card-subtitle>Buffering Statistics </v-card-subtitle>
-      <v-list>
-          <v-list-item
-            v-for="(item, i) in statistics.bufferingStats" :key="i"
-          >
-          
-            <v-list-item-content>
-              <v-list-item-title v-text="humanReadableTimestamp(item.startTime) + ' ' +(item.duration) + 'ms'"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-      </v-list>
-      
-    </v-card>
-
+    </v-row>
   </v-card>
 </template>
 
@@ -109,6 +119,17 @@ export default Vue.extend({
     humanReadableTimestamp(timestamp: number) : string {
       var s = new Date(timestamp).toLocaleTimeString("en-US");
       return s;
+    },
+
+    send_QoE_Stats() {
+      this.$store.dispatch('SubmitStatistics', {
+        statistics: {
+          framesizes: this.statistics.availableFrameSizes,
+          bitrates: this.statistics.availableBitrates,
+          bitratechanged: this.statistics.bitrateChangedTimestamps,
+          bufferstats: this.statistics.bufferingStats
+          }
+      });
     },
 
     setupVideoPlayer() {

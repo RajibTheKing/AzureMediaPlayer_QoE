@@ -8,13 +8,12 @@ import {
 
 export const actions: ActionTree<StatisticsState, RootState> = {
 
-  async SubmitStatistics ({ commit, dispatch }, { stats }): Promise<any> {
-
-    await SubmitStatistics(stats)
+  async SubmitStatistics ({ commit, dispatch }, { statistics }): Promise<any> {
+    console.log("SubmitStatistics: ", statistics);
+    await SubmitStatistics(statistics)
       .then(({ status, data }) => {
         if (status === OK) {
-          console.log('Create Task ... data from server: ', data)
-          //commit('MUTATE_CREATE_TASK', task)
+          console.log('WARNING FROM QoE SERVICE: ', data)
         }
       })
       .catch((e : any) => {
