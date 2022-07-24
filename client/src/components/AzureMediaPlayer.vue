@@ -1,21 +1,21 @@
 <template>
-  <v-card class="mx-auto" max-width="1200" tile justify-center>
+  <v-card class="mx-auto" max-width="1400" tile justify-center>
     <v-row>
-      <v-col>
-        <v-card>
-          <video id= "myVideo" ref="video" class="azuremediaplayer amp-default-skin ma-2">
+      <v-col :cols="7">
+        <v-card class="ma-2">
+          <video id= "myVideo" ref="video" class="azuremediaplayer amp-default-skin ma-4" style="align: center;">
             <p class="amp-no-js">
                 To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video
             </p>
           </video>
         </v-card>
 
-        <v-btn @click="send_QoE_Stats()">
-          Send Data to Server
+        <v-btn @click="send_QoE_Stats()" class = "ma-2">
+          Submit Statistics
         </v-btn>
       </v-col>
-      <v-col>
-        <v-card>
+      <v-col :cols="5">
+        <v-card class="ma-2">
           <v-card-title justify-center>Monitor QoE</v-card-title>
 
           <v-card-subtitle>Available Frame Sizes </v-card-subtitle>
@@ -51,7 +51,7 @@
               >
               
                 <v-list-item-content>
-                  <v-list-item-title v-text="humanReadableTimestamp(item)"></v-list-item-title>
+                  <v-list-item-title v-text="humanReadableTimestamp(item.changedtime)+ ' - ' + humanReadableBitrate(item.changedbitrate)"></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
@@ -132,6 +132,17 @@ export default Vue.extend({
       });
     },
 
+    send_QoE_bitrateChanged(currentBitrateChanged : any) {
+      let len = this.statistics.availableBitrates.length;
+      this.$store.dispatch('SubmitSelectedBitrate', { 
+        obj : {
+          currentbitrate: currentBitrateChanged.changedbitrate,
+          maxbitrate: this.statistics.availableBitrates[len-1],
+          selectedprofile: this.statistics.heuristicProfile,
+        }
+      });
+    },
+
     setupVideoPlayer() {
        this.$nextTick(() => {
           //console.log(this.$refs);
@@ -139,11 +150,12 @@ export default Vue.extend({
 
           var myPlayer = amp(this.$refs.video, { /* Options */
                 "nativeControlsForTouch": false,
-                autoplay: true,
+                autoplay: false,
                 controls: true,
+                muted: false,
                 width: "640",
                 height: "480",
-                poster: "",
+                /*heuristicProfile: "HighQuality",*/
                 plugins: {
                   /* load our telemetry plugin */
                   telemetry: {
@@ -169,12 +181,18 @@ export default Vue.extend({
 
         });
 
-        myPlayer.addEventListener('save_bitrate_change_timestamps', function (event: any, timestamps : any) {
-            currentInstance.$store.dispatch('saveBitrateChangeTimestamps', {timestamps});
+        myPlayer.addEventListener('save_bitrate_change_timestamps', function (event: any, bitrateChanegdTimestamps : any) {
+            currentInstance.$store.dispatch('saveBitrateChangeTimestamps', {bitrateChanegdTimestamps});
+            currentInstance.send_QoE_bitrateChanged(bitrateChanegdTimestamps[bitrateChanegdTimestamps.length-1])
+            console.log("bitrate change ", bitrateChanegdTimestamps);
         });
 
         myPlayer.addEventListener('save_buffering_stats', function (event: any, bufferingStats : any) {
             currentInstance.$store.dispatch('saveBufferingStats', {bufferingStats});
+        });
+
+        myPlayer.addEventListener('save_heuristic_profile', function (event: any, profile : string) {
+            currentInstance.$store.dispatch('saveHeuristicProfile', {profile});
         });
 
       })

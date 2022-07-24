@@ -17,9 +17,12 @@
             });
 
             player.addEventListener('playbackbitratechanged', function (event, info) {
-                //Define new Event to store frameSizes
+                
                 let currentTimestamp = Date.now();
-                bitrateChangedTimestamps.push(currentTimestamp);
+                bitrateChangedTimestamps.push({changedtime: currentTimestamp, changedbitrate: player.currentDownloadBitrate()});
+
+                //Define new Event to store bitrateChanged timestamps
+                console.log('playbackbitratechanged: ', player.currentDownloadBitrate());
                 player.trigger(new Event('save_bitrate_change_timestamps'), bitrateChangedTimestamps);
             });
 
@@ -41,6 +44,10 @@
                 console.log("resume event", info);
             });
 
+            player.addEventListener('HeuristicProfile', function(event, info){
+                console.log("HighQuality event fired", info);
+            });
+
             player.addEventListener('playing', function(event, info){
                 console.log("playing event", info);
                 //track how much time needed for that buffer
@@ -51,7 +58,7 @@
                     bufferingStats.push({startTime: bufferingStartedTimestamp, duration: bufferingTime});
                     bufferingStarted = false;
 
-                    //create a new event to store buffering stats
+                    //create a new Event to store buffering stats
                     player.trigger(new Event('save_buffering_stats'), bufferingStats);
                 }
             })
@@ -61,6 +68,7 @@
             });
             
             player.addEventListener('loadedmetadata', function (event, info) {
+                console.log("heuristic profile: ", player.currentHeuristicProfile());
                 console.log("Buffer Data: ", player.videoBufferData());
 
                 let videoStreamList = player.currentVideoStreamList();
@@ -77,10 +85,13 @@
                 console.log(availableBitrates);
                 console.log(availableFrameSizes);
 
-                //Define new Event to store Bitrates
+                //Define new Event to store heuristicProfile
+                player.trigger(new Event('save_heuristic_profile'), player.currentHeuristicProfile());
+
+                //Define new Event to store available Bitrates
                 player.trigger(new Event('save_available_bitrates'), availableBitrates);
 
-                //Define new Event to store frameSizes
+                //Define new Event to store available frameSizes
                 player.trigger(new Event('save_available_framesizes'), availableFrameSizes);
 
                 //console.log("Audio MetaData: ", player.currentAudioStreamList());

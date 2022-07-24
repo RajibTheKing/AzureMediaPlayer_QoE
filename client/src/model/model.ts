@@ -8,4 +8,5 @@ export type StatisticsState = {
   availableBitrates: [];
   bitrateChangedTimestamps: [];
   bufferingStats: [];
+  heuristicProfile: string;
 };

@@ -20,6 +20,8 @@ app.post('/statistics', (req, res) => {
   //console.log("req.body: ", req.body);
   let current_bitratechanged = req.body.data.bitratechanged;
   let current_bufferstats = req.body.data.bufferstats;
+  console.log('bitrate changed timestamps: ', current_bitratechanged);
+  
   current_bufferstats.forEach(element => {
     console.log(element);
   });
@@ -29,7 +31,25 @@ app.post('/statistics', (req, res) => {
     TOO_MANY_BUFFERING: isTooManyBuffering(current_bufferstats),
   }
 
-  console.log("Warning Calculation: ", ans);
+  console.log("Warning Index: ", ans);
+  res.send(ans);
+  
+})
+
+app.post('/selectedbitrate', (req, res) => {
+  console.log("selected Bitrate req.body: ", req.body);
+  let selectedBitrate = req.body.data.currentbitrate;
+  let maxbitratePossible = req.body.data.maxbitrate;
+  let profile = req.body.data.selectedprofile;
+  
+  let highestBitratePossible = false;
+  if(profile !== 'HighQuality' && selectedBitrate < maxbitratePossible){
+    highestBitratePossible = true;
+  }
+  let ans = {
+    HIGHEST_BITRATE_POSSIBLE : highestBitratePossible,
+  }
+  console.log("Warning Index: ", ans);
   res.send(ans);
   
 })
@@ -48,17 +68,16 @@ function isTooManyBitrateSwitches(bitrateChangedTimestamps)
 
   let slidingWindow = [];
 
-  slidingWindow.push(bitrateChangedTimestamps[0]);
-  slidingWindow.push(bitrateChangedTimestamps[1]);
-  slidingWindow.push(bitrateChangedTimestamps[2]);
+  slidingWindow.push(bitrateChangedTimestamps[0].changedtime);
+  slidingWindow.push(bitrateChangedTimestamps[1].changedtime);
+  slidingWindow.push(bitrateChangedTimestamps[2].changedtime);
   if (slidingWindow[2] - slidingWindow[0] <= 10 * 1000 /*10seconds*/) {
     return true;
   }
   let i = 3;
   for (i; i < bitrateChangedTimestamps.length; i++) {
     slidingWindow = slidingWindow.splice(1);
-    slidingWindow.push(bitrateChangedTimestamps[i]);
-    console.log(slidingWindow);
+    slidingWindow.push(bitrateChangedTimestamps[i].changedtime);
     if (slidingWindow[2] - slidingWindow[0] <= 10 * 1000 /*10seconds*/) {
       return true;
     }

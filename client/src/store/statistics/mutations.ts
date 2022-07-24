@@ -18,4 +18,8 @@ export const mutations: MutationTree<StatisticsState> = {
   MUTATE_SET_BUFFERING_STATS (state, data: any) {
     state.bufferingStats = data;
   },
+
+  MUTATE_SET_HEURISTIC_PROFILE (state, data: any) {
+    state.heuristicProfile = data;
+  },
 }
